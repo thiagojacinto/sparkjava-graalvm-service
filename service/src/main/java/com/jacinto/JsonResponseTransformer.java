@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spark.ResponseTransformer;
 
-public class JsonTransformer implements ResponseTransformer {
+public class JsonResponseTransformer implements ResponseTransformer {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
