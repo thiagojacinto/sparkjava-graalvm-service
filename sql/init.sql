@@ -1,13 +1,14 @@
-CREATE IF NOT EXISTS TYPE tipo_transacao AS ENUM ('c', 'd');
+CREATE TYPE tipo_transacao AS ENUM ('c', 'd');
 
 --- TABELAS
-CREATE IF NOT EXISTS UNLOGGED TABLE cliente (
-    id INT PRIMARY KEY,
+CREATE UNLOGGED TABLE IF NOT EXISTS cliente (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
     limite INTEGER NOT NULL,
     saldo INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE IF NOT EXISTS UNLOGGED TABLE transacao (
+CREATE UNLOGGED TABLE IF NOT EXISTS transacao (
     id SERIAL PRIMARY KEY,
     cliente_id INTEGER NOT NULL,
     valor INTEGER NOT NULL,
@@ -21,7 +22,7 @@ CREATE IF NOT EXISTS UNLOGGED TABLE transacao (
 --- SEED
 DO $$
 BEGIN
-  INSERT INTO clientes (nome, limite)
+  INSERT INTO cliente (nome, limite)
   VALUES
     ('o barato sai caro', 1000 * 100),
     ('zan corp ltda', 800 * 100),
