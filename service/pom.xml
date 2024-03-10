@@ -8,7 +8,7 @@
 	<groupId>com.jacinto</groupId>
 	<artifactId>sparkjava-graalvm-service</artifactId>
 	<version>1.0-SNAPSHOT</version>
-
+	<packaging>jar</packaging>
 	<name>sparkjava-graalvm-service</name>
 	<description>A simple webservice to complete the "Rinha de Backend 2024-Q1"
 		challenge</description>
@@ -18,6 +18,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
+		<app.main.class>com.jacinto.App</app.main.class>
 	</properties>
 
 	<dependencies>
@@ -25,6 +26,7 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -38,7 +40,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 			<version>2.0.12</version>
-			<scope>test</scope>
 		</dependency>
 		<!--
 		https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
@@ -47,6 +48,14 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.16.1</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.7.2</version>
+		</dependency>
+
 
 	</dependencies>
 
@@ -80,10 +89,7 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.22.1</version>
 				</plugin>
-				<plugin>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.0.2</version>
-				</plugin>
+
 				<plugin>
 					<artifactId>maven-install-plugin</artifactId>
 					<version>2.5.2</version>
@@ -91,6 +97,58 @@
 				<plugin>
 					<artifactId>maven-deploy-plugin</artifactId>
 					<version>2.8.2</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.2.0</version>
+					<configuration>
+						<archive>
+							<manifest>
+								<mainClass>${app.main.class}</mainClass>
+							</manifest>
+						</archive>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-shade-plugin</artifactId>
+					<version>3.5.2</version>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>shade</goal>
+							</goals>
+							<configuration>
+								<shadedArtifactAttached>true</shadedArtifactAttached>
+								<transformers>
+									<transformer
+										implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+										<manifestEntries>
+											<Main-Class>${app.main.class}</Main-Class>
+											<X-Compile-Source-JDK>
+												${maven.compile.source}
+											</X-Compile-Source-JDK>
+											<X-Compile-Target-JDK>
+												${maven.compile.target}
+											</X-Compile-Target-JDK>
+										</manifestEntries>
+									</transformer>
+									<transformer
+										implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+										<resources>
+											<resource>.MF</resource>
+											<resource>LICENSE</resource>
+											<resource>NOTICE</resource>
+										</resources>
+									</transformer>
+								</transformers>
+							</configuration>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
