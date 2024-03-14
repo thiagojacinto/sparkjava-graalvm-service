@@ -55,8 +55,8 @@ public class Database {
 
 	}
 
-	private static Integer salvarTransacao(Connection connection, Integer clienteId, Integer valor, TipoTransacao tipoTransacao,
-		String descricao) throws SQLException {
+	private static Integer salvarTransacao(Connection connection, Integer clienteId, Integer valor,
+		TipoTransacao tipoTransacao, String descricao) throws SQLException {
 		var insertTransacaoSql = "INSERT INTO transacao (cliente_id, valor, tipo, descricao) VALUES (?,?,tipo_transacao(?),?) RETURNING id;";
 		var prepareInsertTransacao = connection.prepareStatement(insertTransacaoSql);
 		prepareInsertTransacao.setInt(1, clienteId);
@@ -91,7 +91,7 @@ public class Database {
 
 	private static void validarLimitesDaTransacao(Integer valor, TipoTransacao tipo, Cliente cliente)
 		throws SaldoMenorQueLimiteException {
-		if (tipo.equals(TipoTransacao.D) && Math.abs(cliente.saldo) + valor > cliente.limite) {
+		if (tipo.equals(TipoTransacao.D) && cliente.saldo - valor < -cliente.limite) {
 			throw new SaldoMenorQueLimiteException();
 		}
 	}

@@ -9,7 +9,8 @@ public class App {
 
 		HealthCheck.getAppHealthCheck();
 
-		Transacoes.postRegistrarTransacao();
+		Transacoes.registrarTransacao();
+		
 	}
 
 }
