@@ -6,8 +6,7 @@ import static spark.Spark.post;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jacinto.db.Database;
 import com.jacinto.dto.JsonResponseTransformer;
 import com.jacinto.dto.TipoTransacao;
@@ -16,15 +15,11 @@ import com.jacinto.model.exceptions.SaldoMenorQueLimiteException;
 
 public class Transacoes {
 
-	public static void registrarTransacao() {
+	public static void registrarTransacao(ObjectMapper json, String contentType) {
 
-		var acceptedType = "application/json";
-		var json = JsonMapper.builder().enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS).build();
-		;
-
-		post("/clientes/:id/transacoes", acceptedType, (req, res) -> {
+		post("/clientes/:id/transacoes", contentType, (req, res) -> {
 			var clientId = Integer.parseInt(req.params(":id"));
-			res.type(acceptedType);
+			res.type(contentType);
 			var reqBody = json.readValue(req.body(), Transacoes.Requisicao.class);
 
 			return Database.criarTransacao(clientId, reqBody.valor, reqBody.tipo, reqBody.descricao);

@@ -3,7 +3,12 @@ package com.jacinto.db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.jacinto.dto.RespostaExtrato;
 import com.jacinto.dto.RespostaTransacaoSucedida;
 import com.jacinto.dto.TipoTransacao;
 import com.jacinto.model.Cliente;
@@ -94,6 +99,64 @@ public class Database {
 		if (tipo.equals(TipoTransacao.D) && cliente.saldo - valor < -cliente.limite) {
 			throw new SaldoMenorQueLimiteException();
 		}
+	}
+
+	public static RespostaExtrato gerarExtrato(Integer clienteId) throws SQLException, ClienteNaoEncontradoException {
+
+		try (Connection conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)) {
+
+			boolean autoCommit = conn.getAutoCommit();
+			try {
+				conn.setAutoCommit(false);
+
+				var saldoDoExtrato = consultarSaldoELimite(clienteId, conn);
+				var ultimasTransacoes = consultarUltimasTransacoes(clienteId, conn);
+
+				return new RespostaExtrato(saldoDoExtrato, ultimasTransacoes);
+
+			} catch (SQLException sqlException) {
+				conn.rollback();
+				throw sqlException;
+			} finally {
+				conn.setAutoCommit(autoCommit);
+			}
+		}
+	}
+
+	private static List<RespostaExtrato.TransacaoExtrato> consultarUltimasTransacoes(Integer clienteId, Connection conn)
+		throws SQLException {
+		var selectUltimasTransacoesSql = "SELECT valor, tipo, descricao, realizada_em FROM transacao WHERE cliente_id = ? ORDER BY realizada_em DESC LIMIT 10;";
+		var prepareSelectTransacoes = conn.prepareStatement(selectUltimasTransacoesSql);
+		prepareSelectTransacoes.setInt(1, clienteId);
+		prepareSelectTransacoes.execute();
+
+		var resultUltimasTransacoes = prepareSelectTransacoes.getResultSet();
+		List<RespostaExtrato.TransacaoExtrato> ultimasTransacoes = new ArrayList<>();
+		while (resultUltimasTransacoes.next()) {
+			
+			var transacao = new RespostaExtrato.TransacaoExtrato(resultUltimasTransacoes.getInt("valor"),
+				TipoTransacao.valueOf(resultUltimasTransacoes.getString("tipo").toUpperCase()),
+				resultUltimasTransacoes.getString("descricao"), resultUltimasTransacoes.getObject("realizada_em", LocalDateTime.class));
+
+			ultimasTransacoes.add(transacao);
+		}
+		return ultimasTransacoes;
+	}
+
+	private static RespostaExtrato.Saldo consultarSaldoELimite(Integer clienteId, Connection conn)
+		throws SQLException, ClienteNaoEncontradoException {
+
+		var selectClienteSql = "SELECT saldo, limite FROM cliente WHERE id = ?;";
+		var prepareSelectClienteInfo = conn.prepareStatement(selectClienteSql);
+		prepareSelectClienteInfo.setInt(1, clienteId);
+
+		var resultSelectClienteInfo = prepareSelectClienteInfo.executeQuery();
+		if (!resultSelectClienteInfo.isBeforeFirst()) {
+			throw new ClienteNaoEncontradoException();
+		}
+		resultSelectClienteInfo.next();
+		return new RespostaExtrato.Saldo(resultSelectClienteInfo.getInt("saldo"), resultSelectClienteInfo.getInt("limite"),
+			LocalDateTime.now(ZoneId.of("GMT+3")));
 	}
 
 }

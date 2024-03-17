@@ -1,16 +1,14 @@
 package com.jacinto.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jacinto.config.Config;
 
 import spark.ResponseTransformer;
 
 public class JsonResponseTransformer implements ResponseTransformer {
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
-
 	@Override
 	public String render(final Object object) throws JsonProcessingException {
-		return objectMapper.writeValueAsString(object);
+		return Config.JSON.writeValueAsString(object);
 	}
 }

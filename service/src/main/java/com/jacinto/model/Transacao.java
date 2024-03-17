@@ -9,17 +9,17 @@ public class Transacao {
 	public Integer id;
 	public Integer clienteId;
 	public Integer valor;
-	public TipoTransacao tipoTranscao;
+	public TipoTransacao tipoTransacao;
 	public String descricao;
 	public Date realizadaEm;
 
-	public Transacao(Integer id, Integer clienteId, Integer valor, TipoTransacao tipoTranscao, String descricao,
+	public Transacao(Integer id, Integer clienteId, Integer valor, TipoTransacao tipoTransacao, String descricao,
 		Date realizadaEm) {
 		super();
 		this.id = id;
 		this.clienteId = clienteId;
 		this.valor = valor;
-		this.tipoTranscao = tipoTranscao;
+		this.tipoTransacao = tipoTransacao;
 		this.descricao = descricao;
 		this.realizadaEm = realizadaEm;
 	}
