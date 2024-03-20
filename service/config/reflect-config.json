@@ -1,6 +1,62 @@
 [
 {
+  "name":"[Lcom.fasterxml.jackson.databind.deser.Deserializers;"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.deser.KeyDeserializers;"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.deser.ValueInstantiators;"
+},
+{
+  "name":"[Lcom.fasterxml.jackson.databind.ser.Serializers;"
+},
+{
   "name":"com.fasterxml.jackson.databind.ext.Java7SupportImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.jacinto.controllers.Transacoes$Requisicao",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Integer","com.jacinto.dto.TipoTransacao","java.lang.String"] }]
+},
+{
+  "name":"com.jacinto.dto.RespostaExtrato",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"saldo","parameterTypes":[] }, {"name":"ultimasTransacoes","parameterTypes":[] }]
+},
+{
+  "name":"com.jacinto.dto.RespostaExtrato$Saldo",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"dataExtrato","parameterTypes":[] }, {"name":"limite","parameterTypes":[] }, {"name":"total","parameterTypes":[] }]
+},
+{
+  "name":"com.jacinto.dto.RespostaExtrato$TransacaoExtrato",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"descricao","parameterTypes":[] }, {"name":"realizadaEm","parameterTypes":[] }, {"name":"tipoTransacao","parameterTypes":[] }, {"name":"valor","parameterTypes":[] }]
+},
+{
+  "name":"com.jacinto.dto.RespostaTransacaoSucedida",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "methods":[{"name":"limite","parameterTypes":[] }, {"name":"saldo","parameterTypes":[] }]
+},
+{
+  "name":"com.jacinto.dto.TipoTransacao",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"com.sun.crypto.provider.HmacCore$HmacSHA256",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"com.sun.crypto.provider.PBKDF2Core$HmacSHA256",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
@@ -10,6 +66,10 @@
 {
   "name":"java.lang.Byte",
   "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
+  "name":"java.lang.Class",
+  "methods":[{"name":"getRecordComponents","parameterTypes":[] }]
 },
 {
   "name":"java.lang.Double",
@@ -28,8 +88,21 @@
   "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
 },
 {
+  "name":"java.lang.Record",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true
+},
+{
+  "name":"java.lang.SecurityManager",
+  "methods":[{"name":"checkPermission","parameterTypes":["java.security.Permission"] }]
+},
+{
   "name":"java.lang.Short",
   "methods":[{"name":"valueOf","parameterTypes":["java.lang.String"] }]
+},
+{
+  "name":"java.lang.System",
+  "methods":[{"name":"getSecurityManager","parameterTypes":[] }]
 },
 {
   "name":"java.lang.Thread",
@@ -45,11 +118,19 @@
   "methods":[{"name":"getUptime","parameterTypes":[] }]
 },
 {
+  "name":"java.lang.reflect.RecordComponent",
+  "methods":[{"name":"getName","parameterTypes":[] }, {"name":"getType","parameterTypes":[] }]
+},
+{
   "name":"java.security.AccessController",
-  "methods":[{"name":"doPrivileged","parameterTypes":["java.security.PrivilegedAction"] }]
+  "methods":[{"name":"doPrivileged","parameterTypes":["java.security.PrivilegedAction"] }, {"name":"doPrivileged","parameterTypes":["java.security.PrivilegedExceptionAction"] }]
 },
 {
   "name":"java.security.SecureRandomParameters"
+},
+{
+  "name":"java.sql.SQLException",
+  "fields":[{"name":"next"}]
 },
 {
   "name":"java.util.concurrent.Executors",
@@ -76,7 +157,26 @@
   "methods":[{"name":"getClassLoaderLocation","parameterTypes":["java.lang.Class"] }, {"name":"getCodeSourceLocation","parameterTypes":["java.lang.Class"] }, {"name":"getModuleLocation","parameterTypes":["java.lang.Class"] }, {"name":"getSystemClassLoaderLocation","parameterTypes":["java.lang.Class"] }]
 },
 {
+  "name":"org.postgresql.Driver"
+},
+{
+  "name":"org.postgresql.core.QueryExecutorCloseAction",
+  "fields":[{"name":"pgStream"}]
+},
+{
+  "name":"org.postgresql.jdbc.PgStatement",
+  "fields":[{"name":"cancelTimerTask"}, {"name":"isClosed"}, {"name":"statementState"}]
+},
+{
   "name":"sun.security.provider.NativePRNG",
   "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"<init>","parameterTypes":["java.security.SecureRandomParameters"] }]
+},
+{
+  "name":"sun.security.provider.SHA",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"sun.security.provider.SHA2$SHA256",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
 }
 ]
