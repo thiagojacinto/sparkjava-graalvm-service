@@ -7,8 +7,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jacinto.config.JsonResponseTransformer;
 import com.jacinto.db.Database;
-import com.jacinto.dto.JsonResponseTransformer;
 import com.jacinto.dto.TipoTransacao;
 import com.jacinto.model.exceptions.ClienteNaoEncontradoException;
 import com.jacinto.model.exceptions.SaldoMenorQueLimiteException;

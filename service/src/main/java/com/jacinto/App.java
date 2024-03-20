@@ -9,8 +9,8 @@ public class App {
 
 	public static void main(String[] args) {
 
-		HealthCheck.getAppHealthCheck();
-
+		HealthCheck.getStatus(Config.CONTENT_TYPE);
+		
 		Transacoes.registrarTransacao(Config.JSON, Config.CONTENT_TYPE);
 
 		Extrato.gerar(Config.JSON, Config.CONTENT_TYPE);

@@ -8,8 +8,8 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
+import com.jacinto.config.JsonResponseTransformer;
 import com.jacinto.db.Database;
-import com.jacinto.dto.JsonResponseTransformer;
 import com.jacinto.model.exceptions.ClienteNaoEncontradoException;
 
 public class Extrato {
