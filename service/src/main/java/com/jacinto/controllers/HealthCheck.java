@@ -1,17 +1,21 @@
 package com.jacinto.controllers;
 
-import java.util.HashMap;
+import static spark.Spark.get;
+
 import java.util.Map;
 
-import com.jacinto.dto.JsonResponse;
+import com.jacinto.config.JsonResponseTransformer;
 
 public class HealthCheck {
 
-	public static void getAppHealthCheck() {
-		Map<String, String> healthStatusMap = new HashMap<>();
-		healthStatusMap.put("status", "UP");
+	public static void getStatus(String contentType) {
 
-		JsonResponse.getAsJSON("/health", healthStatusMap);
+		get("/status", (req, res) -> {
+			res.type(contentType);
+
+			return Map.of("status", "UP");
+		}, new JsonResponseTransformer());
+
 	}
 
 }

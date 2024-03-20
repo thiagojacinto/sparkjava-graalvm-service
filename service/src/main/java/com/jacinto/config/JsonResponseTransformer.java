@@ -1,7 +1,6 @@
-package com.jacinto.dto;
+package com.jacinto.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.jacinto.config.Config;
 
 import spark.ResponseTransformer;
 
