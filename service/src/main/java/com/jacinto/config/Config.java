@@ -1,5 +1,8 @@
 package com.jacinto.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -22,4 +25,5 @@ public class Config {
     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 		.build();
 
+	public static final Logger LOGGER = LoggerFactory.getLogger("com.jacinto.App");
 }

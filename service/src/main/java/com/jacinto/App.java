@@ -11,7 +11,7 @@ public class App {
 
 		HealthCheck.getStatus(Config.CONTENT_TYPE);
 		
-		Transacoes.registrarTransacao(Config.JSON, Config.CONTENT_TYPE);
+		Transacoes.registrarTransacao(Config.JSON, Config.CONTENT_TYPE, Config.LOGGER);
 
 		Extrato.gerar(Config.JSON, Config.CONTENT_TYPE);
 

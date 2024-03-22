@@ -17,14 +17,38 @@ import com.jacinto.model.exceptions.SaldoMenorQueLimiteException;
 
 public class Database {
 
-	public static final String CONNECTION_URL = "jdbc:postgresql://localhost:5432/rinha";
 	public static final String USER = "admin";
 	public static final String PASSWORD = "1313";
+
+	public static String getDbHostname() {
+		String dbHostname;
+		try {
+			dbHostname = System.getenv("DB_HOSTNAME");
+		} catch (Exception e) {
+			dbHostname = "localhost";
+		}
+		return dbHostname != null ? dbHostname : "localhost";
+	}
+
+	public static boolean conexaoEValida() {
+		String CONNECTION_URL = "jdbc:postgresql://" + getDbHostname() + ":5432/rinha";
+		try (Connection conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)) {
+			if (conn != null && !conn.isClosed()) {
+				conn.prepareStatement("SELECT 1");
+				return true;
+			}
+		} catch (SQLException sqlException) {
+			return false;
+		}
+		return false;
+
+	}
 
 	public static RespostaTransacaoSucedida criarTransacao(Integer clienteId, Integer valor, TipoTransacao tipo,
 		String descricao) throws SaldoMenorQueLimiteException, ClienteNaoEncontradoException, SQLException {
 
 		Integer limite = 0, saldo = 0;
+		String CONNECTION_URL = "jdbc:postgresql://" + getDbHostname() + ":5432/rinha";
 
 		try (Connection conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)) {
 			var selectLimitacaoDoClienteSql = "SELECT limite, saldo FROM cliente WHERE id = ?;";
@@ -102,7 +126,7 @@ public class Database {
 	}
 
 	public static RespostaExtrato gerarExtrato(Integer clienteId) throws SQLException, ClienteNaoEncontradoException {
-
+		String CONNECTION_URL = "jdbc:postgresql://" + getDbHostname() + ":5432/rinha";
 		try (Connection conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD)) {
 
 			boolean autoCommit = conn.getAutoCommit();
@@ -133,10 +157,11 @@ public class Database {
 		var resultUltimasTransacoes = prepareSelectTransacoes.getResultSet();
 		List<RespostaExtrato.TransacaoExtrato> ultimasTransacoes = new ArrayList<>();
 		while (resultUltimasTransacoes.next()) {
-			
+
 			var transacao = new RespostaExtrato.TransacaoExtrato(resultUltimasTransacoes.getInt("valor"),
 				TipoTransacao.valueOf(resultUltimasTransacoes.getString("tipo").toUpperCase()),
-				resultUltimasTransacoes.getString("descricao"), resultUltimasTransacoes.getObject("realizada_em", LocalDateTime.class));
+				resultUltimasTransacoes.getString("descricao"),
+				resultUltimasTransacoes.getObject("realizada_em", LocalDateTime.class));
 
 			ultimasTransacoes.add(transacao);
 		}

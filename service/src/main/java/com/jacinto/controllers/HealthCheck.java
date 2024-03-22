@@ -5,6 +5,7 @@ import static spark.Spark.get;
 import java.util.Map;
 
 import com.jacinto.config.JsonResponseTransformer;
+import com.jacinto.db.Database;
 
 public class HealthCheck {
 
@@ -13,7 +14,7 @@ public class HealthCheck {
 		get("/status", (req, res) -> {
 			res.type(contentType);
 
-			return Map.of("status", "UP");
+			return Map.of("server", "UP", "database", Database.conexaoEValida() ? "UP" : "DOWN");
 		}, new JsonResponseTransformer());
 
 	}
