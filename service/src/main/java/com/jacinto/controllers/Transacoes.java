@@ -30,14 +30,14 @@ public class Transacoes {
 		exception(SaldoMenorQueLimiteException.class, (exception, req, res)-> {
 			res.status(422);
 			try {
-				logger.error("[ 	error	] POST - /clientes/" + req.params(":id") + "/transacoes 		-	 Exception: " + exception.getMessage());
+				logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
 				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
 			} catch (JsonProcessingException e) {}
 		});
 		exception(ClienteNaoEncontradoException.class, (exception, req, res) -> {
 			res.status(422);
 			try {
-				logger.error("[ 	error	] POST - /clientes/" + req.params(":id") + "/transacoes 		-	 Exception: " + exception.getMessage());
+				logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
 				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
 			} catch (JsonProcessingException e) {}
 		});
