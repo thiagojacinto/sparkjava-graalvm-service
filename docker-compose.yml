@@ -4,7 +4,7 @@ services:
   api01: &api
     # Lembre-se de que seu serviço HTTP deve estar hospedado num repositório
     # publicamente acessível! Ex.: hub.docker.com
-    image: AAAAA
+    image: thiagojacinto/sparkjava-graalvm-service:1.0.0
     hostname: api01
     environment:
       - DB_HOSTNAME=db
@@ -50,7 +50,7 @@ services:
     image: postgres:16.2-alpine3.19
     hostname: db
     environment:
-      - POSTGRES_PASSWORD=123
+      - POSTGRES_PASSWORD=1313
       - POSTGRES_USER=admin
       - POSTGRES_DB=rinha
     ports:
