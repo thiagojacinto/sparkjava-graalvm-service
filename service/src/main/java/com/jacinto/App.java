@@ -9,11 +9,11 @@ public class App {
 
 	public static void main(String[] args) {
 
-		HealthCheck.getStatus(Config.CONTENT_TYPE);
+		HealthCheck.getStatus(Config.CONTENT_TYPE, Config.LOGGER);
 		
 		Transacoes.registrarTransacao(Config.JSON, Config.CONTENT_TYPE, Config.LOGGER);
 
-		Extrato.gerar(Config.JSON, Config.CONTENT_TYPE);
+		Extrato.gerar(Config.JSON, Config.CONTENT_TYPE, Config.LOGGER);
 
 	}
 

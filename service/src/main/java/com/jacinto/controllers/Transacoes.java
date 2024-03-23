@@ -23,7 +23,6 @@ public class Transacoes {
 			var clientId = Integer.parseInt(req.params(":id"));
 			res.type(contentType);
 			var reqBody = json.readValue(req.body(), Transacoes.Requisicao.class);
-			logger.info("[ 	info	] POST - /clientes/" + clientId + "/transacoes 		-	 Tipo: " + reqBody.tipo);
 
 			return Database.criarTransacao(clientId, reqBody.valor, reqBody.tipo, reqBody.descricao);
 		}, new JsonResponseTransformer());
