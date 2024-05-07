@@ -54,3 +54,32 @@ com retorno esperado no seguinte formato, mostrando até 10 últimas transaçõe
    ]
 }
 ```
+
+### Estressando a aplicação
+
+Script `bash` para enviar um número bom de requisições para a API desenvolvida.
+
+```bash
+# criando transações - CREDITO:
+# while true; do \      # para loops infinitos
+for i in {1..200}; do \
+USUARIO_ID=$(($RANDOM%5+1)); \
+VALOR_TRX=$(($RANDOM%10000+350)); \
+curl -q --no-progress-meter -X POST localhost:9999/clientes/${USUARIO_ID}/transacoes -H "Content-Type: application/json" -d "{\"valor\":${VALOR_TRX},\"tipo\":\"c\",\"descricao\":\"descricao\"}" ;\
+done; 
+
+# criando transações - DEBITO:
+# while true; do \      # para loops infinitos
+for i in {1..200}; do \
+USUARIO_ID=$(($RANDOM%5+1)); \
+VALOR_TRX=$(($RANDOM%15000+8000)); \
+curl -q --no-progress-meter -X POST localhost:9999/clientes/${USUARIO_ID}/transacoes -H "Content-Type: application/json" -d "{\"valor\":${VALOR_TRX},\"tipo\":\"d\",\"descricao\":\"descricao\"}" ;\
+done; 
+
+# gerando extratos:
+# while true; do \      # para loops infinitos
+for i in {1..200}; do \
+USUARIO_ID=$(($RANDOM%5+1)); \
+curl -q --no-progress-meter localhost:9999/clientes/${USUARIO_ID}/extrato \
+done; 
+```
