@@ -72,7 +72,6 @@
 			<version>2.16.1</version>
 		</dependency>
 
-
 		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -80,6 +79,12 @@
 			<version>42.7.2</version>
 		</dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.1.0</version>
+        </dependency>
 
 	</dependencies>
 
