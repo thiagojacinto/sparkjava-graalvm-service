@@ -19,5 +19,9 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+# Eclipse Theia IDEA settings
+.theia/settings.json
+
 # Gatling load test results
 load-test/user-files/results
+ 
