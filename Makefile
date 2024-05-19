@@ -17,8 +17,9 @@ generate-native-app: # With GraalVM's native-image, generate a native app from t
 	-H:ConfigurationFileDirectories=./service/config  \
     --enable-http \
 	--no-fallback \
-    --initialize-at-build-time=org.eclipse.jetty,org.slf4j,javax.servlet,org.zoomba-lang \
-    -jar service/target/sparkjava-graalvm-service-1.0-SNAPSHOT.jar native-app
+    --initialize-at-build-time=org.eclipse.jetty,org.slf4j,javax.servlet,org.zoomba-lang,com.zaxxer \
+	-march=native \
+    -jar service/target/sparkjava-graalvm-service-1.2.0.jar native-app
 
 run-tests: # Start enviroment and execute load tests
 	@echo "$(COLOUR_GREEN)	Starting the environment ...$(COLOUR_END)"
