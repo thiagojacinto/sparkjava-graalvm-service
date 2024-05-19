@@ -4,7 +4,7 @@ services:
   api01: &api
     # Lembre-se de que seu serviço HTTP deve estar hospedado num repositório
     # publicamente acessível! Ex.: hub.docker.com
-    image: thiagojacinto/sparkjava-graalvm-service:1.1.1
+    image: thiagojacinto/sparkjava-graalvm-service:1.2.0
     hostname: api01
     environment:
       - DB_HOSTNAME=db
@@ -18,7 +18,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.50"
+          cpus: "0.40"
           memory: "100MB"
 
   api02:
@@ -43,7 +43,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.10"
+          cpus: "0.20"
           memory: "50MB"
 
   db:
@@ -64,7 +64,7 @@ services:
           # aqui declarados é de 1.5 unidades de CPU e 550MB
           # de memória. A distribuição feita aqui é apenas
           # um exemplo – distribua como quiser.
-          cpus: "0.40"
+          cpus: "0.50"
           memory: "300MB"
 
 # O uso do modo `bridge` deve ser adequado à carga que será usada no teste.
