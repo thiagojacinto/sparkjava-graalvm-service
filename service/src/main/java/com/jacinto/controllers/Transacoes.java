@@ -8,12 +8,15 @@ import java.util.Map;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jacinto.config.JsonResponseTransformer;
 import com.jacinto.db.Database;
 import com.jacinto.dto.TipoTransacao;
 import com.jacinto.model.exceptions.ClienteNaoEncontradoException;
 import com.jacinto.model.exceptions.SaldoMenorQueLimiteException;
+import com.jacinto.model.exceptions.TransacaoComFormatoInvalidoException;
 
 public class Transacoes {
 
@@ -22,9 +25,15 @@ public class Transacoes {
 		post("/clientes/:id/transacoes", contentType, (req, res) -> {
 			var clientId = Integer.parseInt(req.params(":id"));
 			res.type(contentType);
-			var reqBody = json.readValue(req.body(), Transacoes.Requisicao.class);
-
-			return Database.criarTransacao(clientId, reqBody.valor, reqBody.tipo, reqBody.descricao);
+            try {
+                var reqBody = json.readValue(req.body(), Transacoes.Requisicao.class);
+                if (reqBody.descricao == "" || reqBody.descricao == null || reqBody.descricao.length() > 10) {
+                	throw new TransacaoComFormatoInvalidoException("Verificar campo `descricao`.");
+                }
+                return Database.criarTransacao(clientId, reqBody.valor, reqBody.tipo, reqBody.descricao);
+            } catch (StreamReadException | DatabindException e) {
+                throw new TransacaoComFormatoInvalidoException();
+            } 
 		}, new JsonResponseTransformer());
 		
 		exception(SaldoMenorQueLimiteException.class, (exception, req, res)-> {
@@ -41,7 +50,13 @@ public class Transacoes {
 				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
 			} catch (JsonProcessingException e) {}
 		});
-		
+		exception(TransacaoComFormatoInvalidoException.class, (exception, req, res) -> {
+			res.status(400);
+			try {
+				logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
+				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
+			} catch (JsonProcessingException e) {}
+		});
 	}
 	
 	public record Requisicao(Integer valor, TipoTransacao tipo, String descricao) {
