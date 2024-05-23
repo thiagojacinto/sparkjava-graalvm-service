@@ -1,0 +1,21 @@
+services:  
+  db:
+    image: postgres:16.2-alpine3.19
+    hostname: db
+    environment:
+      - POSTGRES_PASSWORD=1313
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=rinha
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/script.sql
+    deploy:
+      resources:
+        limits:
+          # Note que a soma de todos os limites dos serviços
+          # aqui declarados é de 1.5 unidades de CPU e 550MB
+          # de memória. A distribuição feita aqui é apenas
+          # um exemplo – distribua como quiser.
+          cpus: "0.50"
+          memory: "300MB"
