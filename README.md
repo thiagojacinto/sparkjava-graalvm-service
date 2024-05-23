@@ -80,6 +80,6 @@ done;
 # while true; do \      # para loops infinitos
 for i in {1..200}; do \
 USUARIO_ID=$(($RANDOM%5+1)); \
-curl -q --no-progress-meter localhost:9999/clientes/${USUARIO_ID}/extrato \
+curl -q --no-progress-meter localhost:9999/clientes/${USUARIO_ID}/extrato ;\
 done; 
 ```
