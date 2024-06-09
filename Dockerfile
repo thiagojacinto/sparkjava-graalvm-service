@@ -5,9 +5,9 @@ COPY ./service/pom.xml /build
 COPY ./service/src /build/src
 COPY ./service/config /build/config
 
-RUN curl -q -fsSL -o apache-maven.tar.gz https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
-RUN tar xzvf apache-maven.tar.gz
-RUN apache-maven-3.9.6/bin/mvn -f pom.xml package org.apache.maven.plugins:maven-shade-plugin:shade
+RUN curl -q -fsSL -o apache-maven.tar.gz https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz \
+    tar xzvf apache-maven.tar.gz \
+    apache-maven-3.9.6/bin/mvn -f pom.xml package org.apache.maven.plugins:maven-shade-plugin:shade
 
 RUN native-image \
     --verbose \
@@ -21,7 +21,7 @@ RUN native-image \
 
 # The deployment image
 FROM docker.io/library/alpine:20240315
-RUN apk add gcompat
+RUN apk add --no-cache gcompat=1.1.0
 WORKDIR /app
 COPY --from=builder /build/native-sparkjava-graalvm-service-app native
 EXPOSE 8080
