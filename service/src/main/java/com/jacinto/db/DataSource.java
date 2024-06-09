@@ -17,13 +17,9 @@ public class DataSource {
         config.setJdbcUrl(CONNECTION_URL);
         config.setUsername(USER);
         config.setPassword(PASSWORD);
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        config.setMaximumPoolSize(4);
+        config.setMaxLifetime(3000);
         ds = new HikariDataSource(config);
-    }
-
-    private DataSource() {
     }
 
     public static String getDbHostname() {

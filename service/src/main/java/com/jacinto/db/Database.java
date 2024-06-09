@@ -15,10 +15,11 @@ import com.jacinto.model.exceptions.ClienteNaoEncontradoException;
 import com.jacinto.model.exceptions.SaldoMenorQueLimiteException;
 
 public class Database {
-
-    public static boolean conexaoEValida() {
+	
+	public static boolean conexaoEValida() {
         try (Connection conn = DataSource.getConnection()) {
             if (conn != null && !conn.isClosed()) {
+            	conn.setReadOnly(true);
                 conn.prepareStatement("SELECT 1");
                 return true;
             }
@@ -39,10 +40,10 @@ public class Database {
             var prepareSelectLimitacao = conn.prepareStatement(selectLimitacaoDoClienteSql);
             prepareSelectLimitacao.setInt(1, clienteId);
 
-            boolean autoCommit = conn.getAutoCommit();
+            var autoCommitValue = conn.getAutoCommit();
             try {
-                conn.setAutoCommit(false);
-
+            	conn.setReadOnly(false);
+            	conn.setAutoCommit(false);
                 var resultSetLimitacao = prepareSelectLimitacao.executeQuery();
                 if (!resultSetLimitacao.isBeforeFirst()) {
                     throw new ClienteNaoEncontradoException();
@@ -62,7 +63,7 @@ public class Database {
                 conn.rollback();
                 throw sqlException;
             } finally {
-                conn.setAutoCommit(autoCommit);
+            	conn.setAutoCommit(autoCommitValue);
             }
             return new RespostaTransacaoSucedida(limite, saldo);
         }
@@ -112,11 +113,8 @@ public class Database {
 
     public static RespostaExtrato gerarExtrato(Integer clienteId) throws SQLException, ClienteNaoEncontradoException {
         try (Connection conn = DataSource.getConnection()) {
-
-            boolean autoCommit = conn.getAutoCommit();
             try {
-                conn.setAutoCommit(false);
-
+            	conn.setReadOnly(true);
                 var saldoDoExtrato = consultarSaldoELimite(clienteId, conn);
                 var ultimasTransacoes = consultarUltimasTransacoes(clienteId, conn);
 
@@ -125,8 +123,6 @@ public class Database {
             } catch (SQLException sqlException) {
                 conn.rollback();
                 throw sqlException;
-            } finally {
-                conn.setAutoCommit(autoCommit);
             }
         }
     }
