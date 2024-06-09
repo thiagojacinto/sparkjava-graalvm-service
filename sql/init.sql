@@ -19,7 +19,11 @@ CREATE UNLOGGED TABLE IF NOT EXISTS transacao (
             FOREIGN KEY (cliente_id) REFERENCES cliente(id)
 );
 
-CREATE INDEX IF NOT EXISTS "transacao_cliente_id_idx" ON transacao (cliente_id);
+--- INDICES
+
+CREATE INDEX IF NOT EXISTS "idx_transacao_cliente_id" ON transacao (cliente_id);
+
+CREATE INDEX IF NOT EXISTS "idx_last_client_transactions" ON transacao (cliente_id, realizada_em DESC);
 
 --- SEED
 DO $$
