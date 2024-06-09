@@ -3,6 +3,7 @@ package com.jacinto.controllers;
 import static spark.Spark.exception;
 import static spark.Spark.get;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -32,6 +33,13 @@ public class Extrato {
 			} catch (JsonProcessingException e) {}
 		});
 		
+		exception(SQLException.class, (exception, req, res) -> {
+			res.status(503);
+			try {
+				logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
+				res.body(json.writeValueAsString(Map.of("code", 503, "message", "Erro no servidor. Por favor entre em contato com suporte")));
+			} catch (JsonProcessingException e) {}
+		});
+		
 	}
-
 }
