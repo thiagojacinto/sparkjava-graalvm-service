@@ -29,8 +29,7 @@ run-tests: # Start enviroment and execute load tests
 
 lint-dockerfile: # Uses hadolint as a Dockerfile Linter
 	@echo "$(COLOUR_GREEN)	Execute hadolint to lint the Dockerfile ...$(COLOUR_END)"
-	podman run --rm -i hadolint/hadolint hadolint "$@" - < ./Dockerfile
-
+	podman run --rm -v ./Dockerfile:/Dockerfile hadolint/hadolint hadolint /Dockerfile
 #: #########################################
 #: ############ Help - Makefile ############
 #: #########################################
