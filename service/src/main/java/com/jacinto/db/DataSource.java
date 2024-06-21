@@ -11,7 +11,11 @@ public class DataSource {
     private static HikariDataSource ds;
     public static final String USER = "admin";
     public static final String PASSWORD = "1313";
-    public static final String CONNECTION_URL = "jdbc:postgresql://" + getDbHostname() + ":5432/rinha";
+    public static final String CONNECTION_URL = new StringBuilder()
+    		.append("jdbc:postgresql://")
+    		.append(getDbHostname())
+    		.append(":5432/rinha")
+    		.toString();
 
     static {
         config.setJdbcUrl(CONNECTION_URL);
@@ -19,6 +23,7 @@ public class DataSource {
         config.setPassword(PASSWORD);
         config.setMaximumPoolSize(4);
         config.setMaxLifetime(3000);
+        config.setAutoCommit(false);
         ds = new HikariDataSource(config);
     }
 

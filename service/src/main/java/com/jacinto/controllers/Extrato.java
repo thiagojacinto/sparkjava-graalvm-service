@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
+import com.jacinto.config.Config;
 import com.jacinto.config.JsonResponseTransformer;
 import com.jacinto.db.Database;
 
@@ -28,7 +29,7 @@ public class Extrato {
 		exception(InvalidDefinitionException.class, (exception, req, res) -> {
 			res.status(503);
 			try {
-				logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
+				if (logger != null) logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
 				res.body(json.writeValueAsString(Map.of("code", 503, "message", "Erro no servidor. Por favor entre em contato com suporte")));
 			} catch (JsonProcessingException e) {}
 		});
@@ -36,7 +37,7 @@ public class Extrato {
 		exception(SQLException.class, (exception, req, res) -> {
 			res.status(503);
 			try {
-				logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
+				if (logger != null) logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
 				res.body(json.writeValueAsString(Map.of("code", 503, "message", "Erro no servidor. Por favor entre em contato com suporte")));
 			} catch (JsonProcessingException e) {}
 		});

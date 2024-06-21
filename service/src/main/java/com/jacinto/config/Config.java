@@ -14,16 +14,21 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class Config {
 
+	public static final boolean NEEDS_LOGGING = System.getenv("TURN_LOG_ON") != null
+			&& !System.getenv("TURN_LOG_ON").isBlank();
+
 	public static final String CONTENT_TYPE = "application/json";
 
-	public static final ObjectMapper JSON = JsonMapper.builder()
-		.addModule(new ParameterNamesModule())
-		.addModule(new Jdk8Module())
-		.addModule(new JavaTimeModule())
-		.propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-		.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
-    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-		.build();
+	public static final ObjectMapper JSON = JsonMapper
+			.builder()
+			.addModule(new ParameterNamesModule())
+			.addModule(new Jdk8Module()).addModule(new JavaTimeModule())
+			.propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+			.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+			.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+			.build();
 
-	public static final Logger LOGGER = LoggerFactory.getLogger("com.jacinto.App");
+	public static final Logger LOGGER = NEEDS_LOGGING
+			? LoggerFactory.getLogger("com.jacinto.App")
+			: null;
 }

@@ -40,10 +40,8 @@ public class Database {
             var prepareSelectLimitacao = conn.prepareStatement(selectLimitacaoDoClienteSql);
             prepareSelectLimitacao.setInt(1, clienteId);
 
-            var autoCommitValue = conn.getAutoCommit();
             try {
             	conn.setReadOnly(false);
-            	conn.setAutoCommit(false);
                 var resultSetLimitacao = prepareSelectLimitacao.executeQuery();
                 if (!resultSetLimitacao.isBeforeFirst()) {
                     throw new ClienteNaoEncontradoException();
@@ -62,8 +60,6 @@ public class Database {
             } catch (SQLException sqlException) {
                 conn.rollback();
                 throw sqlException;
-            } finally {
-            	conn.setAutoCommit(autoCommitValue);
             }
             return new RespostaTransacaoSucedida(limite, saldo);
         }

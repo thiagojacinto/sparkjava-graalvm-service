@@ -17,11 +17,11 @@ public class HealthCheck {
 		get("/status", (req, res) -> {
 			res.type(contentType);
 			String dbStatus = "UP";
-			
+
 			if (!Database.conexaoEValida()) {
-				  dbStatus = "DOWN";
-				  res.status(HttpStatus.SERVICE_UNAVAILABLE_503);
-					logger.error("[ 	error	] GET - /status		-	 Error: Failed to connect to database");
+				dbStatus = "DOWN";
+				res.status(HttpStatus.SERVICE_UNAVAILABLE_503);
+				if (logger != null) logger.error("[ 	error	] GET - /status		-	 Error: Failed to connect to database");
 
 			}
 			return Map.of("server", "UP", "database", dbStatus);

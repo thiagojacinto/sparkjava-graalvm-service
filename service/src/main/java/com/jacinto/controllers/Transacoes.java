@@ -39,21 +39,21 @@ public class Transacoes {
 		exception(SaldoMenorQueLimiteException.class, (exception, req, res)-> {
 			res.status(422);
 			try {
-				logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
+				if (logger != null) logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
 				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
 			} catch (JsonProcessingException e) {}
 		});
 		exception(ClienteNaoEncontradoException.class, (exception, req, res) -> {
 			res.status(422);
 			try {
-				logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
+				if (logger != null) logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
 				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
 			} catch (JsonProcessingException e) {}
 		});
 		exception(TransacaoComFormatoInvalidoException.class, (exception, req, res) -> {
 			res.status(400);
 			try {
-				logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
+				if (logger != null) logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
 				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
 			} catch (JsonProcessingException e) {}
 		});
