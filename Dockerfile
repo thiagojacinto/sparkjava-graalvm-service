@@ -16,7 +16,7 @@ RUN native-image \
     -march=native \
     --initialize-at-build-time=org.eclipse.jetty,org.slf4j,javax.servlet,org.zoomba-lang,com.zaxxer \
     -H:ConfigurationFileDirectories=./config  \
-    -jar ./target/sparkjava-graalvm-service-1.3.0.jar \
+    -jar ./target/sparkjava-graalvm-service-1.4.0.jar \
     -o native-sparkjava-graalvm-service-app
 
 # The deployment image

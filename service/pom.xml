@@ -7,7 +7,7 @@
 
 	<groupId>com.jacinto</groupId>
 	<artifactId>sparkjava-graalvm-service</artifactId>
-	<version>1.3.0</version>
+	<version>1.4.0</version>
 	<packaging>jar</packaging>
 	<name>sparkjava-graalvm-service</name>
 	<description>A simple webservice to complete the "Rinha de Backend 2024-Q1"
