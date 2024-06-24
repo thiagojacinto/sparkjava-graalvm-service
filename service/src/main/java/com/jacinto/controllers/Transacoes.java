@@ -30,6 +30,7 @@ public class Transacoes {
                 if (reqBody.descricao == "" || reqBody.descricao == null || reqBody.descricao.length() > 10) {
                 	throw new TransacaoComFormatoInvalidoException("Verificar campo `descricao`.");
                 }
+                Database.existeCliente(clientId);
                 return Database.criarTransacao(clientId, reqBody.valor, reqBody.tipo, reqBody.descricao);
             } catch (StreamReadException | DatabindException e) {
                 throw new TransacaoComFormatoInvalidoException();

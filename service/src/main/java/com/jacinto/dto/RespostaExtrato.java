@@ -5,8 +5,8 @@ import java.util.List;
 
 public record RespostaExtrato(Saldo saldo, List<TransacaoExtrato> ultimasTransacoes) {
 
-	public record Saldo(Integer total, Integer limite, LocalDateTime dataExtrato) {}
+	public record Saldo(Long total, Long limite, LocalDateTime dataExtrato) {}
 
-	public record TransacaoExtrato(Integer valor, TipoTransacao tipoTransacao, String descricao, LocalDateTime realizadaEm) {}
+	public record TransacaoExtrato(Long valor, TipoTransacao tipoTransacao, String descricao, LocalDateTime realizadaEm) {}
 
 }

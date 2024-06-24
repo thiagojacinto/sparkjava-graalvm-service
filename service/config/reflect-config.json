@@ -147,6 +147,10 @@
   "name":"java.security.SecureRandomParameters"
 },
 {
+  "name":"java.sql.SQLException",
+  "fields":[{"name":"next"}]
+},
+{
   "name":"java.util.concurrent.Executors",
   "methods":[{"name":"newVirtualThreadPerTaskExecutor","parameterTypes":[] }]
 },

@@ -1,5 +1,5 @@
 package com.jacinto.dto;
 
-public record RespostaTransacaoSucedida(Integer limite, Integer saldo) {
+public record RespostaTransacaoSucedida(Long limite, Long saldo) {
 
 }

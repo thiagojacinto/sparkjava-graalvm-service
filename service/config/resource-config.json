@@ -36,5 +36,8 @@
   "bundles":[{
     "name":"jakarta.servlet.LocalStrings",
     "locales":["", "und"]
+  }, {
+    "name":"org.postgresql.translation.messages",
+    "classNames":["org.postgresql.translation.messages_pt_BR"]
   }]
 }

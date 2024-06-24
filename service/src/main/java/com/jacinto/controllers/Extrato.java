@@ -11,9 +11,9 @@ import org.slf4j.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
-import com.jacinto.config.Config;
 import com.jacinto.config.JsonResponseTransformer;
 import com.jacinto.db.Database;
+import com.jacinto.model.exceptions.ClienteNaoEncontradoException;
 
 public class Extrato {
 	
@@ -22,7 +22,7 @@ public class Extrato {
 		get("clientes/:id/extrato", (req, res) -> {
 			var clientId = Integer.parseInt(req.params(":id"));
 			res.type(contentType);
-			
+			Database.existeCliente(clientId);
 			return Database.gerarExtrato(clientId);
 		}, new JsonResponseTransformer());
 		
@@ -31,6 +31,14 @@ public class Extrato {
 			try {
 				if (logger != null) logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
 				res.body(json.writeValueAsString(Map.of("code", 503, "message", "Erro no servidor. Por favor entre em contato com suporte")));
+			} catch (JsonProcessingException e) {}
+		});
+		
+		exception(ClienteNaoEncontradoException.class, (exception, req, res) -> {
+			res.status(422);
+			try {
+				if (logger != null) logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
+				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
 			} catch (JsonProcessingException e) {}
 		});
 		

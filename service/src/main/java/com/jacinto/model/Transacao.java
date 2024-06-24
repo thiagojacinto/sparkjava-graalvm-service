@@ -8,12 +8,12 @@ public class Transacao {
 
 	public Integer id;
 	public Integer clienteId;
-	public Integer valor;
+	public Long valor;
 	public TipoTransacao tipoTransacao;
 	public String descricao;
 	public Date realizadaEm;
 
-	public Transacao(Integer id, Integer clienteId, Integer valor, TipoTransacao tipoTransacao, String descricao,
+	public Transacao(Integer id, Integer clienteId, Long valor, TipoTransacao tipoTransacao, String descricao,
 		Date realizadaEm) {
 		super();
 		this.id = id;
