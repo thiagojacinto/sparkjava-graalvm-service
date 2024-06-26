@@ -86,36 +86,27 @@ public class Database {
 
     }
 
-    private static Integer salvarTransacao(Connection connection, Integer clienteId, Integer valor,
+    private static void salvarTransacao(Connection connection, Integer clienteId, Integer valor,
             TipoTransacao tipoTransacao, String descricao) throws SQLException {
-        var insertTransacaoSql = "INSERT INTO transacao (cliente_id, valor, tipo, descricao) VALUES (?,?,tipo_transacao(?),?) RETURNING id;";
+        var insertTransacaoSql = "INSERT INTO transacao (cliente_id, valor, tipo, descricao) VALUES (?,?,tipo_transacao(?),?)";
         var prepareInsertTransacao = connection.prepareStatement(insertTransacaoSql);
         prepareInsertTransacao.setInt(1, clienteId);
         prepareInsertTransacao.setInt(2, valor);
         prepareInsertTransacao.setString(3, tipoTransacao.name().toLowerCase());
         prepareInsertTransacao.setString(4, descricao);
-        prepareInsertTransacao.execute();
-
-        var resultado = prepareInsertTransacao.getResultSet();
-        return resultado.next() ? resultado.getInt(1) : 0;
-
+        prepareInsertTransacao.executeUpdate();
     }
 
     private static Long atualizarSaldoDoCliente(Connection sqlConnection, Integer valor, TipoTransacao tipoTransacao,
             Cliente cliente) throws SQLException {
 
-        Long novoSaldo = cliente.saldo;
-        if (tipoTransacao.equals(TipoTransacao.D)) {
-            novoSaldo = novoSaldo - valor;
-        } else {
-            novoSaldo = novoSaldo + valor;
-        }
+        Long novoSaldo = tipoTransacao.equals(TipoTransacao.D) ? cliente.saldo - valor : cliente.saldo + valor;
 
         var updateAtualizarSaldoClienteSql = "UPDATE cliente SET saldo = ? WHERE id = ?;";
         var prepareAtualizarSaldoCliente = sqlConnection.prepareStatement(updateAtualizarSaldoClienteSql);
         prepareAtualizarSaldoCliente.setLong(1, novoSaldo);
         prepareAtualizarSaldoCliente.setInt(2, cliente.id);
-        prepareAtualizarSaldoCliente.execute();
+        prepareAtualizarSaldoCliente.executeUpdate();
         
         return novoSaldo;
     }
@@ -128,20 +119,17 @@ public class Database {
     }
 
     public static RespostaExtrato gerarExtrato(Integer clienteId) throws SQLException, ClienteNaoEncontradoException {
-        try (Connection conn = DataSource.getConnection()) {
-            try {
-            	conn.setReadOnly(true);
-                var saldoDoExtrato = consultarSaldoELimite(clienteId, conn);
-                var ultimasTransacoes = consultarUltimasTransacoes(clienteId, conn);
-                conn.commit();
-                
-                return new RespostaExtrato(saldoDoExtrato, ultimasTransacoes);
+		try (Connection conn = DataSource.getConnection()) {
+			conn.setReadOnly(true);
+			var saldoDoExtrato = consultarSaldoELimite(clienteId, conn);
+			var ultimasTransacoes = consultarUltimasTransacoes(clienteId, conn);
+			conn.commit();
 
-            } catch (SQLException sqlException) {
-                conn.rollback();
-                throw sqlException;
-            }
-        }
+			return new RespostaExtrato(saldoDoExtrato, ultimasTransacoes);
+
+		} catch (SQLException sqlException) {
+			throw sqlException;
+		}
     }
 
     private static List<RespostaExtrato.TransacaoExtrato> consultarUltimasTransacoes(Integer clienteId, Connection conn)
@@ -149,7 +137,7 @@ public class Database {
         var selectUltimasTransacoesSql = "SELECT valor, tipo, descricao, realizada_em FROM transacao WHERE cliente_id = ? ORDER BY realizada_em DESC LIMIT 10;";
         var prepareSelectTransacoes = conn.prepareStatement(selectUltimasTransacoesSql);
         prepareSelectTransacoes.setInt(1, clienteId);
-        prepareSelectTransacoes.execute();
+        prepareSelectTransacoes.executeQuery();
 
         var resultUltimasTransacoes = prepareSelectTransacoes.getResultSet();
         List<RespostaExtrato.TransacaoExtrato> ultimasTransacoes = new ArrayList<>();
