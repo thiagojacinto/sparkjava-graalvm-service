@@ -11,16 +11,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jacinto.config.JsonResponseTransformer;
 import com.jacinto.db.Database;
 import com.jacinto.dto.TipoTransacao;
 import com.jacinto.model.exceptions.ClienteNaoEncontradoException;
 import com.jacinto.model.exceptions.SaldoMenorQueLimiteException;
 import com.jacinto.model.exceptions.TransacaoComFormatoInvalidoException;
 
+import spark.ResponseTransformer;
+
 public class Transacoes {
 
-	public static void registrarTransacao(ObjectMapper json, String contentType, Logger logger) {
+	public static void registrarTransacao(ResponseTransformer jsonTransformer, ObjectMapper json, String contentType, Logger logger) {
 
 		post("/clientes/:id/transacoes", contentType, (req, res) -> {
 			var clientId = Integer.parseInt(req.params(":id"));
@@ -35,7 +36,7 @@ public class Transacoes {
             } catch (StreamReadException | DatabindException e) {
                 throw new TransacaoComFormatoInvalidoException();
             } 
-		}, new JsonResponseTransformer());
+		}, jsonTransformer);
 		
 		exception(SaldoMenorQueLimiteException.class, (exception, req, res)-> {
 			res.status(422);

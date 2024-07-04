@@ -17,7 +17,7 @@ run-collecting-config: # Run tests while running Java app to collect config file
 	make run-jar & \
 	sleep 5; \
 	./executar-teste-para-config.sh; \
-	bash -c kill $(pgrep -n java); \
+	bash -c 'kill $(pgrep -n java);' \
 	podman compose -f sql/pg-compose.yaml down
 
 generate-native-app: # With GraalVM's native-image, generate a native app from the JAR file

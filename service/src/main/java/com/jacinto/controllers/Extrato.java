@@ -11,20 +11,21 @@ import org.slf4j.Logger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
-import com.jacinto.config.JsonResponseTransformer;
 import com.jacinto.db.Database;
 import com.jacinto.model.exceptions.ClienteNaoEncontradoException;
 
+import spark.ResponseTransformer;
+
 public class Extrato {
 	
-	public static void gerar(ObjectMapper json, String contentType, Logger logger) {
+	public static void gerar(ResponseTransformer jsonTransformer, ObjectMapper json, String contentType, Logger logger) {
 		
 		get("clientes/:id/extrato", (req, res) -> {
 			var clientId = Integer.parseInt(req.params(":id"));
 			res.type(contentType);
 			Database.existeCliente(clientId);
 			return Database.gerarExtrato(clientId);
-		}, new JsonResponseTransformer());
+		}, jsonTransformer);
 		
 		exception(InvalidDefinitionException.class, (exception, req, res) -> {
 			res.status(503);

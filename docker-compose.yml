@@ -2,7 +2,7 @@ services:
   api01: &api
     # Lembre-se de que seu serviço HTTP deve estar hospedado num repositório
     # publicamente acessível! Ex.: hub.docker.com
-    image: thiagojacinto/sparkjava-graalvm-service:1.5.1
+    image: thiagojacinto/sparkjava-graalvm-service:1.5.2
     hostname: api01
     environment:
       - DB_HOSTNAME=db

@@ -7,12 +7,13 @@ import java.util.Map;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 
-import com.jacinto.config.JsonResponseTransformer;
 import com.jacinto.db.Database;
+
+import spark.ResponseTransformer;
 
 public class HealthCheck {
 
-	public static void getStatus(String contentType, Logger logger) {
+	public static void getStatus(ResponseTransformer jsonTransformer, String contentType, Logger logger) {
 
 		get("/status", (req, res) -> {
 			res.type(contentType);
@@ -25,7 +26,7 @@ public class HealthCheck {
 
 			}
 			return Map.of("server", "UP", "database", dbStatus);
-		}, new JsonResponseTransformer());
+		}, jsonTransformer);
 
 	}
 
