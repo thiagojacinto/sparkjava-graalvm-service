@@ -3,6 +3,7 @@ package com.jacinto.controllers;
 import static spark.Spark.exception;
 import static spark.Spark.post;
 
+import java.sql.SQLException;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -31,13 +32,19 @@ public class Transacoes {
                 if (reqBody.descricao == "" || reqBody.descricao == null || reqBody.descricao.length() > 10) {
                 	throw new TransacaoComFormatoInvalidoException("Verificar campo `descricao`.");
                 }
-                Database.existeCliente(clientId);
                 return Database.criarTransacao(clientId, reqBody.valor, reqBody.tipo, reqBody.descricao);
             } catch (StreamReadException | DatabindException e) {
                 throw new TransacaoComFormatoInvalidoException();
             } 
 		}, jsonTransformer);
 		
+		exception(SQLException.class, (exception, req, res)-> {
+			res.status(422);
+			try {
+				if (logger != null) logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
+				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
+			} catch (JsonProcessingException e) {}
+		});
 		exception(SaldoMenorQueLimiteException.class, (exception, req, res)-> {
 			res.status(422);
 			try {

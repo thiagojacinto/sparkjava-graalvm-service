@@ -31,4 +31,7 @@ public class Config {
 	public static final Logger LOGGER = NEEDS_LOGGING
 			? LoggerFactory.getLogger("com.jacinto.App")
 			: null;
+	
+	public static final JsonResponseTransformer RESPONSE_TRANSFORMER = 
+			new JsonResponseTransformer();
 }

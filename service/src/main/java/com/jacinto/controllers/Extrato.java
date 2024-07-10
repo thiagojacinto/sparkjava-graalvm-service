@@ -23,10 +23,16 @@ public class Extrato {
 		get("clientes/:id/extrato", (req, res) -> {
 			var clientId = Integer.parseInt(req.params(":id"));
 			res.type(contentType);
-			Database.existeCliente(clientId);
 			return Database.gerarExtrato(clientId);
 		}, jsonTransformer);
 		
+		exception(SQLException.class, (exception, req, res)-> {
+			res.status(422);
+			try {
+				if (logger != null) logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
+				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
+			} catch (JsonProcessingException e) {}
+		});
 		exception(InvalidDefinitionException.class, (exception, req, res) -> {
 			res.status(503);
 			try {

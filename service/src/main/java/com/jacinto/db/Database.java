@@ -30,27 +30,6 @@ public class Database {
 
     }
 	
-	public static boolean existeCliente(Integer clienteId) throws SQLException, ClienteNaoEncontradoException {
-		try(Connection conn = DataSource.getConnection()) {
-			conn.setReadOnly(true);
-			var existeClienteSql = "SELECT true FROM cliente WHERE id = ?;";
-            var prepareExisteCliente = conn.prepareStatement(existeClienteSql);
-            prepareExisteCliente.setInt(1, clienteId);
-
-            try {
-                var resultSetExisteCliente = prepareExisteCliente.executeQuery();
-                conn.commit();
-                if (!resultSetExisteCliente.isBeforeFirst()) {
-                    throw new ClienteNaoEncontradoException();
-                }
-                return true;
-            } catch (SQLException sqlException) {
-	            conn.rollback();
-	            throw sqlException;
-	        }
-		}
-	}
-
     public static RespostaTransacaoSucedida criarTransacao(Integer clienteId, Integer valor, TipoTransacao tipo,
             String descricao) throws SaldoMenorQueLimiteException, ClienteNaoEncontradoException, SQLException {
 
