@@ -25,3 +25,5 @@ buildNumber.properties
 # Gatling load test results
 load-test/user-files/results
  
+# macOS
+.DS_Store
