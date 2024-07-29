@@ -30,7 +30,8 @@ public class Transacoes {
             try {
                 var reqBody = json.readValue(req.body(), Transacoes.Requisicao.class);
                 if (reqBody.descricao == "" || reqBody.descricao == null || reqBody.descricao.length() > 10) {
-                	throw new TransacaoComFormatoInvalidoException("Verificar campo `descricao`.");
+                	res.status(422);
+                	return null;
                 }
                 return Database.criarTransacao(clientId, reqBody.valor, reqBody.tipo, reqBody.descricao);
             } catch (StreamReadException | DatabindException e) {

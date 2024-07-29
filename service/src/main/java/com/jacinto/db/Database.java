@@ -15,6 +15,14 @@ import com.jacinto.model.exceptions.ClienteNaoEncontradoException;
 import com.jacinto.model.exceptions.SaldoMenorQueLimiteException;
 
 public class Database {
+	static final private String SELECT_CLIENTE_SQL 
+		= "SELECT saldo, limite FROM cliente WHERE id = ?;";
+	static final private String INSERT_TRANSACAO_SQL 
+		= "INSERT INTO transacao (cliente_id, valor, tipo, descricao) VALUES (?,?,tipo_transacao(?),?);";
+	static final private String UPDATE_ATUALIZAR_SALDO_CLIENTE_SQL 
+		= "UPDATE cliente SET saldo = ? WHERE id = ?;";
+	static final private String SELECT_ULTIMAS_TRANSACOES_SQL 
+		= "SELECT valor, tipo, descricao, realizada_em FROM transacao WHERE cliente_id = ? ORDER BY realizada_em DESC LIMIT 10;";
 	
 	public static boolean conexaoEValida() {
         try (Connection conn = DataSource.getConnection()) {
@@ -36,8 +44,7 @@ public class Database {
         Long limite = 0L, saldo = 0L;
 
         try (Connection conn = DataSource.getConnection()) {
-            var selectLimitacaoDoClienteSql = "SELECT limite, saldo FROM cliente WHERE id = ?;";
-            var prepareSelectLimitacao = conn.prepareStatement(selectLimitacaoDoClienteSql);
+            var prepareSelectLimitacao = conn.prepareStatement(SELECT_CLIENTE_SQL);
             prepareSelectLimitacao.setInt(1, clienteId);
 
             try {
@@ -67,8 +74,7 @@ public class Database {
 
     private static void salvarTransacao(Connection connection, Integer clienteId, Integer valor,
             TipoTransacao tipoTransacao, String descricao) throws SQLException {
-        var insertTransacaoSql = "INSERT INTO transacao (cliente_id, valor, tipo, descricao) VALUES (?,?,tipo_transacao(?),?)";
-        var prepareInsertTransacao = connection.prepareStatement(insertTransacaoSql);
+        var prepareInsertTransacao = connection.prepareStatement(INSERT_TRANSACAO_SQL);
         prepareInsertTransacao.setInt(1, clienteId);
         prepareInsertTransacao.setInt(2, valor);
         prepareInsertTransacao.setString(3, tipoTransacao.name().toLowerCase());
@@ -81,8 +87,7 @@ public class Database {
 
         Long novoSaldo = tipoTransacao.equals(TipoTransacao.D) ? cliente.saldo - valor : cliente.saldo + valor;
 
-        var updateAtualizarSaldoClienteSql = "UPDATE cliente SET saldo = ? WHERE id = ?;";
-        var prepareAtualizarSaldoCliente = sqlConnection.prepareStatement(updateAtualizarSaldoClienteSql);
+        var prepareAtualizarSaldoCliente = sqlConnection.prepareStatement(UPDATE_ATUALIZAR_SALDO_CLIENTE_SQL);
         prepareAtualizarSaldoCliente.setLong(1, novoSaldo);
         prepareAtualizarSaldoCliente.setInt(2, cliente.id);
         prepareAtualizarSaldoCliente.executeUpdate();
@@ -113,8 +118,7 @@ public class Database {
 
     private static List<RespostaExtrato.TransacaoExtrato> consultarUltimasTransacoes(Integer clienteId, Connection conn)
             throws SQLException {
-        var selectUltimasTransacoesSql = "SELECT valor, tipo, descricao, realizada_em FROM transacao WHERE cliente_id = ? ORDER BY realizada_em DESC LIMIT 10;";
-        var prepareSelectTransacoes = conn.prepareStatement(selectUltimasTransacoesSql);
+        var prepareSelectTransacoes = conn.prepareStatement(SELECT_ULTIMAS_TRANSACOES_SQL);
         prepareSelectTransacoes.setInt(1, clienteId);
         prepareSelectTransacoes.executeQuery();
 
@@ -122,10 +126,12 @@ public class Database {
         List<RespostaExtrato.TransacaoExtrato> ultimasTransacoes = new ArrayList<>();
         while (resultUltimasTransacoes.next()) {
 
-            var transacao = new RespostaExtrato.TransacaoExtrato(resultUltimasTransacoes.getLong("valor"),
+            var transacao = new RespostaExtrato.TransacaoExtrato(
+            		resultUltimasTransacoes.getLong("valor"),
                     TipoTransacao.valueOf(resultUltimasTransacoes.getString("tipo").toUpperCase()),
                     resultUltimasTransacoes.getString("descricao"),
-                    resultUltimasTransacoes.getObject("realizada_em", LocalDateTime.class));
+                    resultUltimasTransacoes.getObject("realizada_em", LocalDateTime.class)
+                );
 
             ultimasTransacoes.add(transacao);
         }
@@ -135,8 +141,7 @@ public class Database {
     private static RespostaExtrato.Saldo consultarSaldoELimite(Integer clienteId, Connection conn)
             throws SQLException, ClienteNaoEncontradoException {
 
-        var selectClienteSql = "SELECT saldo, limite FROM cliente WHERE id = ?;";
-        var prepareSelectClienteInfo = conn.prepareStatement(selectClienteSql);
+        var prepareSelectClienteInfo = conn.prepareStatement(SELECT_CLIENTE_SQL);
         prepareSelectClienteInfo.setInt(1, clienteId);
 
         var resultSelectClienteInfo = prepareSelectClienteInfo.executeQuery();
