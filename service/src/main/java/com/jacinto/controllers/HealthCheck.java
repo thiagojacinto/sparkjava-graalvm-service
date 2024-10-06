@@ -23,11 +23,8 @@ public class HealthCheck {
 				dbStatus = "DOWN";
 				res.status(HttpStatus.SERVICE_UNAVAILABLE_503);
 				if (logger != null) logger.error("[ 	error	] GET - /status		-	 Error: Failed to connect to database");
-
 			}
 			return Map.of("server", "UP", "database", dbStatus);
 		}, jsonTransformer);
-
 	}
-
 }

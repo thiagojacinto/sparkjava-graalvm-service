@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jacinto.dto.RespostaExtrato;
-import com.jacinto.dto.RespostaTransacaoSucedida;
+import com.jacinto.dto.RespostaTransacaoBemSucedida;
 import com.jacinto.dto.TipoTransacao;
 import com.jacinto.model.Cliente;
 import com.jacinto.model.exceptions.ClienteNaoEncontradoException;
@@ -28,17 +28,16 @@ public class Database {
         try (Connection conn = DataSource.getConnection()) {
             if (conn != null && !conn.isClosed()) {
             	conn.setReadOnly(true);
-                conn.prepareStatement("SELECT 1");
-                return true;
+                return conn.isValid(500);
             }
-        } catch (SQLException sqlException) {
+        } catch (Exception e) {
             return false;
         }
         return false;
 
     }
 	
-    public static RespostaTransacaoSucedida criarTransacao(Integer clienteId, Integer valor, TipoTransacao tipo,
+    public static RespostaTransacaoBemSucedida criarTransacao(Integer clienteId, Integer valor, TipoTransacao tipo,
             String descricao) throws SaldoMenorQueLimiteException, ClienteNaoEncontradoException, SQLException {
 
         Long limite = 0L, saldo = 0L;
@@ -50,7 +49,12 @@ public class Database {
             try {
             	conn.setReadOnly(false);
                 var resultSetLimitacao = prepareSelectLimitacao.executeQuery();
-                resultSetLimitacao.next();
+                boolean clienteInexistente = !resultSetLimitacao.next();
+                if (clienteInexistente) {
+                	conn.commit();
+                	throw new ClienteNaoEncontradoException();
+                }
+                
                 var cliente = new Cliente(
             		clienteId, 
             		resultSetLimitacao.getLong("limite"),
@@ -58,7 +62,11 @@ public class Database {
                 );
                 limite = cliente.limite;
 
-                validarLimitesDaTransacao(valor, tipo, cliente);
+                var isLimitesValidos = validarLimites(valor, tipo, cliente);
+                if (!isLimitesValidos) {
+                	conn.commit();
+                	return null;
+                }
                 saldo = atualizarSaldoDoCliente(conn, valor, tipo, cliente);
                 salvarTransacao(conn, cliente.id, valor, tipo, descricao);
                 conn.commit();
@@ -67,7 +75,7 @@ public class Database {
                 conn.rollback();
                 throw sqlException;
             }
-            return new RespostaTransacaoSucedida(limite, saldo);
+            return new RespostaTransacaoBemSucedida(limite, saldo);
         }
 
     }
@@ -95,11 +103,11 @@ public class Database {
         return novoSaldo;
     }
 
-    private static void validarLimitesDaTransacao(Integer valor, TipoTransacao tipo, Cliente cliente)
-            throws SaldoMenorQueLimiteException {
+    private static boolean validarLimites(Integer valor, TipoTransacao tipo, Cliente cliente) {
         if (tipo.equals(TipoTransacao.D) && cliente.saldo - valor < -cliente.limite) {
-            throw new SaldoMenorQueLimiteException();
+        	return false;
         }
+        return true;
     }
 
     public static RespostaExtrato gerarExtrato(Integer clienteId) throws SQLException, ClienteNaoEncontradoException {
@@ -145,7 +153,11 @@ public class Database {
         prepareSelectClienteInfo.setInt(1, clienteId);
 
         var resultSelectClienteInfo = prepareSelectClienteInfo.executeQuery();
-        resultSelectClienteInfo.next();
+        
+        boolean clienteInexistente = !resultSelectClienteInfo.next();;
+        if (clienteInexistente) {
+        	throw new ClienteNaoEncontradoException();
+        }
         return new RespostaExtrato.Saldo(
             resultSelectClienteInfo.getLong("saldo"),
             resultSelectClienteInfo.getLong("limite"),

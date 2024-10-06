@@ -21,10 +21,11 @@ public class DataSource {
         config.setJdbcUrl(CONNECTION_URL);
         config.setUsername(USER);
         config.setPassword(PASSWORD);
-        config.setMaximumPoolSize(50);
+        config.setMaximumPoolSize(10);
         config.setMinimumIdle(5);
-        config.setMaxLifetime(1000);
+        config.setMaxLifetime(35_000);
         config.setAutoCommit(false);
+        config.setConnectionTimeout(500);
         ds = new HikariDataSource(config);
     }
 

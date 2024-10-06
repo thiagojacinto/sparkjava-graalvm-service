@@ -6,6 +6,7 @@ import static spark.Spark.post;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,41 +31,46 @@ public class Transacoes {
             try {
                 var reqBody = json.readValue(req.body(), Transacoes.Requisicao.class);
                 if (reqBody.descricao == "" || reqBody.descricao == null || reqBody.descricao.length() > 10) {
-                	res.status(422);
+                	res.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
                 	return null;
                 }
-                return Database.criarTransacao(clientId, reqBody.valor, reqBody.tipo, reqBody.descricao);
+                var resposta = Database.criarTransacao(clientId, reqBody.valor, reqBody.tipo, reqBody.descricao);
+                if (resposta == null) {
+                	res.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
+                	return null;
+                }
+                return resposta;
             } catch (StreamReadException | DatabindException e) {
                 throw new TransacaoComFormatoInvalidoException();
             } 
 		}, jsonTransformer);
 		
 		exception(SQLException.class, (exception, req, res)-> {
-			res.status(422);
+			res.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
 			try {
 				if (logger != null) logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
-				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
+				res.body(json.writeValueAsString(Map.of("code", HttpStatus.UNPROCESSABLE_ENTITY_422, "message", exception.getMessage())));
 			} catch (JsonProcessingException e) {}
 		});
 		exception(SaldoMenorQueLimiteException.class, (exception, req, res)-> {
-			res.status(422);
+			res.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
 			try {
 				if (logger != null) logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
-				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
+				res.body(json.writeValueAsString(Map.of("code", HttpStatus.UNPROCESSABLE_ENTITY_422, "message", exception.getMessage())));
 			} catch (JsonProcessingException e) {}
 		});
 		exception(ClienteNaoEncontradoException.class, (exception, req, res) -> {
-			res.status(422);
+			res.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
 			try {
 				if (logger != null) logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
-				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
+				res.body(json.writeValueAsString(Map.of("code", HttpStatus.UNPROCESSABLE_ENTITY_422, "message", exception.getMessage())));
 			} catch (JsonProcessingException e) {}
 		});
 		exception(TransacaoComFormatoInvalidoException.class, (exception, req, res) -> {
-			res.status(400);
+			res.status(HttpStatus.BAD_REQUEST_400);
 			try {
 				if (logger != null) logger.error("[ 	error	] " + req.requestMethod() + " - " + req.uri() + " 		-	 Exception: " + exception.getMessage());
-				res.body(json.writeValueAsString(Map.of("code", 422, "message", exception.getMessage())));
+				res.body(json.writeValueAsString(Map.of("code", HttpStatus.BAD_REQUEST_400, "message", exception.getMessage())));
 			} catch (JsonProcessingException e) {}
 		});
 	}
